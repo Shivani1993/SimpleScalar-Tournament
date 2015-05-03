@@ -731,13 +731,13 @@ int stack_recover_idx) /* Non-speculative top-of-stack;
  (may be NULL for jumps, which shouldn't modify state bits).  Note if
  bpred_update is done speculatively, branch-prediction may get polluted. */
 void bpred_update(struct bpred_t *pred, /* branch predictor instance */
-md_addr_t baddr, /* branch address */
-md_addr_t btarget, /* resolved branch target */
-int taken, /* non-zero if branch was taken */
-int pred_taken, /* non-zero if branch was pred taken */
-int correct, /* was earlier addr prediction ok? */
-enum md_opcode op, /* opcode of instruction */
-struct bpred_update_t *dir_update_ptr)/* pred state pointer */
+	md_addr_t baddr, /* branch address */
+	md_addr_t btarget, /* resolved branch target */
+	int taken, /* non-zero if branch was taken */
+	int pred_taken, /* non-zero if branch was pred taken */
+	int correct, /* was earlier addr prediction ok? */
+	enum md_opcode op, /* opcode of instruction */
+	struct bpred_update_t *dir_update_ptr)/* pred state pointer */
 {
 	struct bpred_btb_ent_t *pbtb = NULL;
 	struct bpred_btb_ent_t *lruhead = NULL, *lruitem = NULL;
@@ -829,6 +829,16 @@ struct bpred_update_t *dir_update_ptr)/* pred state pointer */
 				| (!!taken);
 		pred->dirpred.twolev->config.two.shiftregs[l1index] = shift_reg
 				& ((1 << pred->dirpred.twolev->config.two.shift_width) - 1);
+
+		int l1index2, shift_reg2;
+
+		/* also update appropriate L1 local history register */
+		l1index2 = (baddr >> MD_BR_SHIFT)
+				& (pred->dirpred.twolev2->config.two.l1size - 1);
+		shift_reg2 = (pred->dirpred.twolev2->config.two.shiftregs[l1index2] << 1)
+				| (!!taken);
+		pred->dirpred.twolev2->config.two.shiftregs[l1index2] = shift_reg2
+				& ((1 << pred->dirpred.twolev2->config.two.shift_width) - 1);
 	}
 
 	/* find BTB entry if it's a taken branch (don't allocate for non-taken) */
