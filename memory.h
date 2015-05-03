@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef MEMORY_H
 #define MEMORY_H
 
@@ -66,37 +65,37 @@
 
 /* page table entry */
 struct mem_pte_t {
-  struct mem_pte_t *next;	/* next translation in this bucket */
-  md_addr_t tag;		/* virtual page number tag */
-  byte_t *page;			/* page pointer */
+	struct mem_pte_t *next; /* next translation in this bucket */
+	md_addr_t tag; /* virtual page number tag */
+	byte_t *page; /* page pointer */
 };
 
 /* memory object */
 struct mem_t {
-  /* memory object state */
-  char *name;				/* name of this memory space */
-  struct mem_pte_t *ptab[MEM_PTAB_SIZE];/* inverted page table */
+	/* memory object state */
+	char *name; /* name of this memory space */
+	struct mem_pte_t *ptab[MEM_PTAB_SIZE];/* inverted page table */
 
-  /* memory object stats */
-  counter_t page_count;			/* total number of pages allocated */
-  counter_t ptab_misses;		/* total first level page tbl misses */
-  counter_t ptab_accesses;		/* total page table accesses */
+	/* memory object stats */
+	counter_t page_count; /* total number of pages allocated */
+	counter_t ptab_misses; /* total first level page tbl misses */
+	counter_t ptab_accesses; /* total page table accesses */
 };
 
 /* memory access command */
 enum mem_cmd {
-  Read,			/* read memory from target (simulated prog) to host */
-  Write			/* write memory from host (simulator) to target */
+	Read, /* read memory from target (simulated prog) to host */
+	Write /* write memory from host (simulator) to target */
 };
 
 /* memory access function type, this is a generic function exported for the
-   purpose of access the simulated vitual memory space */
+ purpose of access the simulated vitual memory space */
 typedef enum md_fault_type
-(*mem_access_fn)(struct mem_t *mem,	/* memory space to access */
-		 enum mem_cmd cmd,	/* Read or Write */
-		 md_addr_t addr,	/* target memory address to access */
-		 void *p,		/* where to copy to/from */
-		 int nbytes);		/* transfer length in bytes */
+(*mem_access_fn)(struct mem_t *mem, /* memory space to access */
+enum mem_cmd cmd, /* Read or Write */
+md_addr_t addr, /* target memory address to access */
+void *p, /* where to copy to/from */
+int nbytes); /* transfer length in bytes */
 
 /*
  * virtual to host page translation macros
@@ -141,7 +140,6 @@ typedef enum md_fault_type
   for ((ITER)=0; (ITER) < MEM_PTAB_SIZE; (ITER)++)			\
     for ((PTE)=(MEM)->ptab[i]; (PTE) != NULL; (PTE)=(PTE)->next)
 
-
 /*
  * memory accessors macros, fast but difficult to debug...
  */
@@ -162,11 +160,10 @@ typedef enum md_fault_type
 #define MEM_WRITE(MEM, ADDR, TYPE, VAL)					\
   (MEM_TICKLE(MEM, (md_addr_t)(ADDR)),					\
    *((TYPE *)(MEM_PAGE(MEM, (md_addr_t)(ADDR)) + MEM_OFFSET(ADDR))) = (VAL))
-      
+
 /* unsafe version, works with any type */
 #define __UNCHK_MEM_WRITE(MEM, ADDR, TYPE, VAL)				\
   (*((TYPE *)(MEM_PAGE(MEM, (md_addr_t)(ADDR)) + MEM_OFFSET(ADDR))) = (VAL))
-
 
 /* fast memory accessor macros, typed versions */
 #define MEM_READ_BYTE(MEM, ADDR)	MEM_READ(MEM, ADDR, byte_t)
@@ -203,47 +200,45 @@ typedef enum md_fault_type
 				MEM_WRITE(MEM, ADDR, sqword_t, MD_SWAPQ(VAL))
 #endif /* HOST_HAS_QWORD */
 
-
 /* create a flat memory space */
 struct mem_t *
-mem_create(char *name);			/* name of the memory space */
-	   
+mem_create(char *name); /* name of the memory space */
+
 /* translate address ADDR in memory space MEM, returns pointer to host page */
 byte_t *
-mem_translate(struct mem_t *mem,	/* memory space to access */
-	      md_addr_t addr);		/* virtual address to translate */
+mem_translate(struct mem_t *mem, /* memory space to access */
+md_addr_t addr); /* virtual address to translate */
 
 /* allocate a memory page */
 void
-mem_newpage(struct mem_t *mem,		/* memory space to allocate in */
-	    md_addr_t addr);		/* virtual address to allocate */
+mem_newpage(struct mem_t *mem, /* memory space to allocate in */
+md_addr_t addr); /* virtual address to allocate */
 
 /* generic memory access function, it's safe because alignments and permissions
-   are checked, handles any natural transfer sizes; note, faults out if nbytes
-   is not a power-of-two or larger then MD_PAGE_SIZE */
+ are checked, handles any natural transfer sizes; note, faults out if nbytes
+ is not a power-of-two or larger then MD_PAGE_SIZE */
 enum md_fault_type
-mem_access(struct mem_t *mem,		/* memory space to access */
-	   enum mem_cmd cmd,		/* Read (from sim mem) or Write */
-	   md_addr_t addr,		/* target address to access */
-	   void *vp,			/* host memory address to access */
-	   int nbytes);			/* number of bytes to access */
+mem_access(struct mem_t *mem, /* memory space to access */
+enum mem_cmd cmd, /* Read (from sim mem) or Write */
+md_addr_t addr, /* target address to access */
+void *vp, /* host memory address to access */
+int nbytes); /* number of bytes to access */
 
 /* register memory system-specific statistics */
 void
-mem_reg_stats(struct mem_t *mem,	/* memory space to declare */
-	      struct stat_sdb_t *sdb);	/* stats data base */
+mem_reg_stats(struct mem_t *mem, /* memory space to declare */
+struct stat_sdb_t *sdb); /* stats data base */
 
 /* initialize memory system, call before loader.c */
 void
-mem_init(struct mem_t *mem);	/* memory space to initialize */
+mem_init(struct mem_t *mem); /* memory space to initialize */
 
 /* dump a block of memory, returns any faults encountered */
 enum md_fault_type
-mem_dump(struct mem_t *mem,		/* memory space to display */
-	 md_addr_t addr,		/* target address to dump */
-	 int len,			/* number bytes to dump */
-	 FILE *stream);			/* output stream */
-
+mem_dump(struct mem_t *mem, /* memory space to display */
+md_addr_t addr, /* target address to dump */
+int len, /* number bytes to dump */
+FILE *stream); /* output stream */
 
 /*
  * memory accessor routines, these routines require a memory access function
@@ -254,39 +249,39 @@ mem_dump(struct mem_t *mem,		/* memory space to display */
  */
 
 /* copy a '\0' terminated string to/from simulated memory space, returns
-   the number of bytes copied, returns any fault encountered */
+ the number of bytes copied, returns any fault encountered */
 enum md_fault_type
-mem_strcpy(mem_access_fn mem_fn,	/* user-specified memory accessor */
-	   struct mem_t *mem,		/* memory space to access */
-	   enum mem_cmd cmd,		/* Read (from sim mem) or Write */
-	   md_addr_t addr,		/* target address to access */
-	   char *s);			/* host memory string buffer */
+mem_strcpy(mem_access_fn mem_fn, /* user-specified memory accessor */
+struct mem_t *mem, /* memory space to access */
+enum mem_cmd cmd, /* Read (from sim mem) or Write */
+md_addr_t addr, /* target address to access */
+char *s); /* host memory string buffer */
 
 /* copy NBYTES to/from simulated memory space, returns any faults */
 enum md_fault_type
-mem_bcopy(mem_access_fn mem_fn,		/* user-specified memory accessor */
-	  struct mem_t *mem,		/* memory space to access */
-	  enum mem_cmd cmd,		/* Read (from sim mem) or Write */
-	  md_addr_t addr,		/* target address to access */
-	  void *vp,			/* host memory address to access */
-	  int nbytes);			/* number of bytes to access */
+mem_bcopy(mem_access_fn mem_fn, /* user-specified memory accessor */
+struct mem_t *mem, /* memory space to access */
+enum mem_cmd cmd, /* Read (from sim mem) or Write */
+md_addr_t addr, /* target address to access */
+void *vp, /* host memory address to access */
+int nbytes); /* number of bytes to access */
 
 /* copy NBYTES to/from simulated memory space, NBYTES must be a multiple
-   of 4 bytes, this function is faster than mem_bcopy(), returns any
-   faults encountered */
+ of 4 bytes, this function is faster than mem_bcopy(), returns any
+ faults encountered */
 enum md_fault_type
-mem_bcopy4(mem_access_fn mem_fn,	/* user-specified memory accessor */
-	   struct mem_t *mem,		/* memory space to access */
-	   enum mem_cmd cmd,		/* Read (from sim mem) or Write */
-	   md_addr_t addr,		/* target address to access */
-	   void *vp,			/* host memory address to access */
-	   int nbytes);			/* number of bytes to access */
+mem_bcopy4(mem_access_fn mem_fn, /* user-specified memory accessor */
+struct mem_t *mem, /* memory space to access */
+enum mem_cmd cmd, /* Read (from sim mem) or Write */
+md_addr_t addr, /* target address to access */
+void *vp, /* host memory address to access */
+int nbytes); /* number of bytes to access */
 
 /* zero out NBYTES of simulated memory, returns any faults encountered */
 enum md_fault_type
-mem_bzero(mem_access_fn mem_fn,		/* user-specified memory accessor */
-	  struct mem_t *mem,		/* memory space to access */
-	  md_addr_t addr,		/* target address to access */
-	  int nbytes);			/* number of bytes to clear */
+mem_bzero(mem_access_fn mem_fn, /* user-specified memory accessor */
+struct mem_t *mem, /* memory space to access */
+md_addr_t addr, /* target address to access */
+int nbytes); /* number of bytes to clear */
 
 #endif /* MEMORY_H */

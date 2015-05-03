@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef SIM_H
 #define SIM_H
 
@@ -96,7 +95,6 @@ extern FILE *sim_eio_fd;
 /* redirected program/simulator output file names */
 extern FILE *sim_progfd;
 
-
 /*
  * main simulator interfaces, called in the following order
  */
@@ -136,6 +134,6 @@ void sim_uninit(void);
 
 /* print all simulator stats */
 void
-sim_print_stats(FILE *fd);		/* output stream */
+sim_print_stats(FILE *fd); /* output stream */
 
 #endif /* SIM_H */

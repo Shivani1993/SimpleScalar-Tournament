@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -71,110 +70,98 @@ struct range_range_t ptrace_range;
 int ptrace_oneshot = FALSE;
 
 /* open pipeline trace */
-void
-ptrace_open(char *fname,		/* output filename */
-	    char *range)		/* trace range */
+void ptrace_open(char *fname, /* output filename */
+char *range) /* trace range */
 {
-  char *errstr;
+	char *errstr;
 
-  /* parse the output range */
-  if (!range)
-    {
-      /* no range */
-      errstr = range_parse_range(":", &ptrace_range);
-      if (errstr)
-	panic("cannot parse pipetrace range, use: {<start>}:{<end>}");
-      ptrace_active = TRUE;
-    }
-  else
-    {
-      errstr = range_parse_range(range, &ptrace_range);
-      if (errstr)
-	fatal("cannot parse pipetrace range, use: {<start>}:{<end>}");
-      ptrace_active = FALSE;
-    }
+	/* parse the output range */
+	if (!range) {
+		/* no range */
+		errstr = range_parse_range(":", &ptrace_range);
+		if (errstr)
+			panic("cannot parse pipetrace range, use: {<start>}:{<end>}");
+		ptrace_active = TRUE;
+	} else {
+		errstr = range_parse_range(range, &ptrace_range);
+		if (errstr)
+			fatal("cannot parse pipetrace range, use: {<start>}:{<end>}");
+		ptrace_active = FALSE;
+	}
 
-  if (ptrace_range.start.ptype != ptrace_range.end.ptype)
-    fatal("range endpoints are not of the same type");
+	if (ptrace_range.start.ptype != ptrace_range.end.ptype)
+		fatal("range endpoints are not of the same type");
 
-  /* open output trace file */
-  if (!fname || !strcmp(fname, "-") || !strcmp(fname, "stderr"))
-    ptrace_outfd = stderr;
-  else if (!strcmp(fname, "stdout"))
-    ptrace_outfd = stdout;
-  else
-    {
-      ptrace_outfd = fopen(fname, "w");
-      if (!ptrace_outfd)
-	fatal("cannot open pipetrace output file `%s'", fname);
-    }
+	/* open output trace file */
+	if (!fname || !strcmp(fname, "-") || !strcmp(fname, "stderr"))
+		ptrace_outfd = stderr;
+	else if (!strcmp(fname, "stdout"))
+		ptrace_outfd = stdout;
+	else {
+		ptrace_outfd = fopen(fname, "w");
+		if (!ptrace_outfd)
+			fatal("cannot open pipetrace output file `%s'", fname);
+	}
 }
 
 /* close pipeline trace */
-void
-ptrace_close(void)
-{
-  if (ptrace_outfd != NULL && ptrace_outfd != stderr && ptrace_outfd != stdout)
-    fclose(ptrace_outfd);
+void ptrace_close(void) {
+	if (ptrace_outfd != NULL && ptrace_outfd != stderr && ptrace_outfd != stdout)
+		fclose(ptrace_outfd);
 }
 
 /* declare a new instruction */
-void
-__ptrace_newinst(unsigned int iseq,	/* instruction sequence number */
-		 md_inst_t inst,	/* new instruction */
-		 md_addr_t pc,		/* program counter of instruction */
-		 md_addr_t addr)	/* address referenced, if load/store */
+void __ptrace_newinst(unsigned int iseq, /* instruction sequence number */
+md_inst_t inst, /* new instruction */
+md_addr_t pc, /* program counter of instruction */
+md_addr_t addr) /* address referenced, if load/store */
 {
-  myfprintf(ptrace_outfd, "+ %u 0x%08p 0x%08p ", iseq, pc, addr);
-  md_print_insn(inst, addr, ptrace_outfd);
-  fprintf(ptrace_outfd, "\n");
+	myfprintf(ptrace_outfd, "+ %u 0x%08p 0x%08p ", iseq, pc, addr);
+	md_print_insn(inst, addr, ptrace_outfd);
+	fprintf(ptrace_outfd, "\n");
 
-  if (ptrace_outfd == stderr || ptrace_outfd == stdout)
-    fflush(ptrace_outfd);
+	if (ptrace_outfd == stderr || ptrace_outfd == stdout)
+		fflush(ptrace_outfd);
 }
 
 /* declare a new uop */
-void
-__ptrace_newuop(unsigned int iseq,	/* instruction sequence number */
-		char *uop_desc,		/* new uop description */
-		md_addr_t pc,		/* program counter of instruction */
-		md_addr_t addr)		/* address referenced, if load/store */
+void __ptrace_newuop(unsigned int iseq, /* instruction sequence number */
+char *uop_desc, /* new uop description */
+md_addr_t pc, /* program counter of instruction */
+md_addr_t addr) /* address referenced, if load/store */
 {
-  myfprintf(ptrace_outfd,
-	    "+ %u 0x%08p 0x%08p [%s]\n", iseq, pc, addr, uop_desc);
+	myfprintf(ptrace_outfd, "+ %u 0x%08p 0x%08p [%s]\n", iseq, pc, addr,
+			uop_desc);
 
-  if (ptrace_outfd == stderr || ptrace_outfd == stdout)
-    fflush(ptrace_outfd);
+	if (ptrace_outfd == stderr || ptrace_outfd == stdout)
+		fflush(ptrace_outfd);
 }
 
 /* declare instruction retirement or squash */
-void
-__ptrace_endinst(unsigned int iseq)	/* instruction sequence number */
+void __ptrace_endinst(unsigned int iseq) /* instruction sequence number */
 {
-  fprintf(ptrace_outfd, "- %u\n", iseq);
+	fprintf(ptrace_outfd, "- %u\n", iseq);
 
-  if (ptrace_outfd == stderr || ptrace_outfd == stdout)
-    fflush(ptrace_outfd);
+	if (ptrace_outfd == stderr || ptrace_outfd == stdout)
+		fflush(ptrace_outfd);
 }
 
 /* declare a new cycle */
-void
-__ptrace_newcycle(tick_t cycle)		/* new cycle */
+void __ptrace_newcycle(tick_t cycle) /* new cycle */
 {
-  fprintf(ptrace_outfd, "@ %.0f\n", (double)cycle);
+	fprintf(ptrace_outfd, "@ %.0f\n", (double) cycle);
 
-  if (ptrace_outfd == stderr || ptrace_outfd == stdout)
-    fflush(ptrace_outfd);
+	if (ptrace_outfd == stderr || ptrace_outfd == stdout)
+		fflush(ptrace_outfd);
 }
 
 /* indicate instruction transition to a new pipeline stage */
-void
-__ptrace_newstage(unsigned int iseq,	/* instruction sequence number */
-		  char *pstage,		/* pipeline stage entered */
-		  unsigned int pevents)/* pipeline events while in stage */
+void __ptrace_newstage(unsigned int iseq, /* instruction sequence number */
+char *pstage, /* pipeline stage entered */
+unsigned int pevents)/* pipeline events while in stage */
 {
-  fprintf(ptrace_outfd, "* %u %s 0x%08x\n", iseq, pstage, pevents);
+	fprintf(ptrace_outfd, "* %u %s 0x%08x\n", iseq, pstage, pevents);
 
-  if (ptrace_outfd == stderr || ptrace_outfd == stdout)
-    fflush(ptrace_outfd);
+	if (ptrace_outfd == stderr || ptrace_outfd == stdout)
+		fflush(ptrace_outfd);
 }

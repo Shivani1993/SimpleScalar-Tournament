@@ -48,14 +48,13 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef BITMAP_H
 #define BITMAP_H
 
 /* BITMAPs:
-     BMAP: int * to an array of ints
-     SZ: number of ints in the bitmap
-*/
+ BMAP: int * to an array of ints
+ SZ: number of ints in the bitmap
+ */
 
 /* declare a bitmap type */
 #define BITMAP_SIZE(BITS)	(((BITS)+31)/32)

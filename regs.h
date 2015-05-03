@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef REGS_H
 #define REGS_H
 
@@ -98,11 +97,11 @@
  */
 
 struct regs_t {
-  md_gpr_t regs_R;		/* (signed) integer register file */
-  md_fpr_t regs_F;		/* floating point register file */
-  md_ctrl_t regs_C;		/* control register file */
-  md_addr_t regs_PC;		/* program counter */
-  md_addr_t regs_NPC;		/* next-cycle program counter */
+	md_gpr_t regs_R; /* (signed) integer register file */
+	md_fpr_t regs_F; /* floating point register file */
+	md_ctrl_t regs_C; /* control register file */
+	md_addr_t regs_PC; /* program counter */
+	md_addr_t regs_NPC; /* next-cycle program counter */
 };
 
 /* create a register file */
@@ -110,15 +109,15 @@ struct regs_t *regs_create(void);
 
 /* initialize architected register state */
 void
-regs_init(struct regs_t *regs);		/* register file to initialize */
+regs_init(struct regs_t *regs); /* register file to initialize */
 
 /* dump all architected register state values to output stream STREAM */
 void
-regs_dump(struct regs_t *regs,		/* register file to display */
-	  FILE *stream);		/* output stream */
+regs_dump(struct regs_t *regs, /* register file to display */
+FILE *stream); /* output stream */
 
 /* destroy a register file */
 void
-regs_destroy(struct regs_t *regs);	/* register file to release */
+regs_destroy(struct regs_t *regs); /* register file to release */
 
 #endif /* REGS_H */

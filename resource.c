@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -59,125 +58,109 @@
 
 /* create a resource pool */
 struct res_pool *
-res_create_pool(char *name, struct res_desc *pool, int ndesc)
-{
-  int i, j, k, index, ninsts;
-  struct res_desc *inst_pool;
-  struct res_pool *res;
+res_create_pool(char *name, struct res_desc *pool, int ndesc) {
+	int i, j, k, index, ninsts;
+	struct res_desc *inst_pool;
+	struct res_pool *res;
 
-  /* count total instances */
-  for (ninsts=0,i=0; i<ndesc; i++)
-    {
-      if (pool[i].quantity > MAX_INSTS_PER_CLASS)
-        fatal("too many functional units, increase MAX_INSTS_PER_CLASS");
-      ninsts += pool[i].quantity;
-    }
-
-  /* allocate the instance table */
-  inst_pool = (struct res_desc *)calloc(ninsts, sizeof(struct res_desc));
-  if (!inst_pool)
-    fatal("out of virtual memory");
-
-  /* fill in the instance table */
-  for (index=0,i=0; i<ndesc; i++)
-    {
-      for (j=0; j<pool[i].quantity; j++)
-	{
-	  inst_pool[index] = pool[i];
-	  inst_pool[index].quantity = 1;
-	  inst_pool[index].busy = FALSE;
-	  for (k=0; k<MAX_RES_CLASSES && inst_pool[index].x[k].class; k++)
-	    inst_pool[index].x[k].master = &inst_pool[index];
-	  index++;
+	/* count total instances */
+	for (ninsts = 0, i = 0; i < ndesc; i++) {
+		if (pool[i].quantity > MAX_INSTS_PER_CLASS)
+			fatal("too many functional units, increase MAX_INSTS_PER_CLASS");
+		ninsts += pool[i].quantity;
 	}
-    }
-  assert(index == ninsts);
 
-  /* allocate the resouce pool descriptor */
-  res = (struct res_pool *)calloc(1, sizeof(struct res_pool));
-  if (!res)
-    fatal("out of virtual memory");
-  res->name = name;
-  res->num_resources = ninsts;
-  res->resources = inst_pool;
+	/* allocate the instance table */
+	inst_pool = (struct res_desc *) calloc(ninsts, sizeof(struct res_desc));
+	if (!inst_pool)
+		fatal("out of virtual memory");
 
-  /* fill in the resource table map - slow to build, but fast to access */
-  for (i=0; i<ninsts; i++)
-    {
-      struct res_template *plate;
-      for (j=0; j<MAX_RES_CLASSES; j++)
-	{
-	  plate = &res->resources[i].x[j];
-	  if (plate->class)
-	    {
-	      assert(plate->class < MAX_RES_CLASSES);
-	      res->table[plate->class][res->nents[plate->class]++] = plate;
-	    }
-	  else
-	    /* all done with this instance */
-	    break;
+	/* fill in the instance table */
+	for (index = 0, i = 0; i < ndesc; i++) {
+		for (j = 0; j < pool[i].quantity; j++) {
+			inst_pool[index] = pool[i];
+			inst_pool[index].quantity = 1;
+			inst_pool[index].busy = FALSE;
+			for (k = 0; k < MAX_RES_CLASSES && inst_pool[index].x[k].class; k++)
+				inst_pool[index].x[k].master = &inst_pool[index];
+			index++;
+		}
 	}
-    }
+	assert(index == ninsts);
 
-  return res;
+	/* allocate the resouce pool descriptor */
+	res = (struct res_pool *) calloc(1, sizeof(struct res_pool));
+	if (!res)
+		fatal("out of virtual memory");
+	res->name = name;
+	res->num_resources = ninsts;
+	res->resources = inst_pool;
+
+	/* fill in the resource table map - slow to build, but fast to access */
+	for (i = 0; i < ninsts; i++) {
+		struct res_template *plate;
+		for (j = 0; j < MAX_RES_CLASSES; j++) {
+			plate = &res->resources[i].x[j];
+			if (plate->class) {
+				assert(plate->class < MAX_RES_CLASSES);
+				res->table[plate->class][res->nents[plate->class]++] = plate;
+			} else
+				/* all done with this instance */
+				break;
+		}
+	}
+
+	return res;
 }
 
 /* get a free resource from resource pool POOL that can execute a
-   operation of class CLASS, returns a pointer to the resource template,
-   returns NULL, if there are currently no free resources available,
-   follow the MASTER link to the master resource descriptor;
-   NOTE: caller is responsible for reseting the busy flag in the beginning
-   of the cycle when the resource can once again accept a new operation */
+ operation of class CLASS, returns a pointer to the resource template,
+ returns NULL, if there are currently no free resources available,
+ follow the MASTER link to the master resource descriptor;
+ NOTE: caller is responsible for reseting the busy flag in the beginning
+ of the cycle when the resource can once again accept a new operation */
 struct res_template *
-res_get(struct res_pool *pool, int class)
-{
-  int i;
+res_get(struct res_pool *pool, int class) {
+	int i;
 
-  /* must be a valid class */
-  assert(class < MAX_RES_CLASSES);
+	/* must be a valid class */
+	assert(class < MAX_RES_CLASSES);
 
-  /* must be at least one resource in this class */
-  assert(pool->table[class][0]);
+	/* must be at least one resource in this class */
+	assert(pool->table[class][0]);
 
-  for (i=0; i<MAX_INSTS_PER_CLASS; i++)
-    {
-      if (pool->table[class][i])
-	{
-	  if (!pool->table[class][i]->master->busy)
-	    return pool->table[class][i];
+	for (i = 0; i < MAX_INSTS_PER_CLASS; i++) {
+		if (pool->table[class][i]) {
+			if (!pool->table[class][i]->master->busy)
+				return pool->table[class][i];
+		} else
+			break;
 	}
-      else
-	break;
-    }
-  /* none found */
-  return NULL;
+	/* none found */
+	return NULL;
 }
 
 /* dump the resource pool POOL to stream STREAM */
-void
-res_dump(struct res_pool *pool, FILE *stream)
-{
-  int i, j;
+void res_dump(struct res_pool *pool, FILE *stream) {
+	int i, j;
 
-  if (!stream)
-    stream = stderr;
+	if (!stream)
+		stream = stderr;
 
-  fprintf(stream, "Resource pool: %s:\n", pool->name);
-  fprintf(stream, "\tcontains %d resource instances\n", pool->num_resources);
-  for (i=0; i<MAX_RES_CLASSES; i++)
-    {
-      fprintf(stream, "\tclass: %d: %d matching instances\n",
-	      i, pool->nents[i]);
-      fprintf(stream, "\tmatching: ");
-      for (j=0; j<MAX_INSTS_PER_CLASS; j++)
-	{
-	  if (!pool->table[i][j])
-	    break;
-	  fprintf(stream, "\t%s (busy for %d cycles) ",
-		  pool->table[i][j]->master->name,
-		  pool->table[i][j]->master->busy);
+	fprintf(stream, "Resource pool: %s:\n", pool->name);
+	fprintf(stream, "\tcontains %d resource instances\n", pool->num_resources);
+	for (i = 0; i < MAX_RES_CLASSES; i++) {
+		fprintf(stream, "\tclass: %d: %d matching instances\n", i,
+				pool->nents[i]);
+		fprintf(stream, "\tmatching: ");
+		for (j = 0; j < MAX_INSTS_PER_CLASS; j++) {
+			if (!pool->table[i][j])
+				break;
+			fprintf(stream, "\t%s (busy for %d cycles) ",
+					pool->table[i][j]->master->name,
+					pool->table[i][j]->master->busy);
+		}
+		assert(j == pool->nents[i]);
+		fprintf(stream, "\n");
 	}
-      assert(j == pool->nents[i]);
-      fprintf(stream, "\n");
-    }
 }

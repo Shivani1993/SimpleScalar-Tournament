@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 /*
  * This module implements DLite, the lite debugger.  DLite is a very light
  * weight semi-symbolic debbugger that can interface to any simulator with
@@ -119,55 +118,55 @@
 #include "eval.h"
 
 /* DLite register access function, the debugger uses this function to access
-   simulator register state */
-typedef char *					/* error str, NULL if none */
-(*dlite_reg_obj_t)(struct regs_t *regs,		/* registers to access */
-		   int is_write,		/* access type */
-		   enum md_reg_type rt,		/* reg bank to access */
-		   int reg,			/* register number */
-		   struct eval_value_t *val);	/* input, output */
+ simulator register state */
+typedef char * /* error str, NULL if none */
+(*dlite_reg_obj_t)(struct regs_t *regs, /* registers to access */
+int is_write, /* access type */
+enum md_reg_type rt, /* reg bank to access */
+int reg, /* register number */
+struct eval_value_t *val); /* input, output */
 
 /* DLite memory access function, the debugger uses this function to access
-   simulator memory state */
-typedef char *					/* error str, NULL if none */
-(*dlite_mem_obj_t)(struct mem_t *mem,		/* memory space to access */
-		   int is_write,		/* access type */
-		   md_addr_t addr,		/* address to access */
-		   char *p,			/* input/output buffer */
-		   int nbytes);			/* size of access */
+ simulator memory state */
+typedef char * /* error str, NULL if none */
+(*dlite_mem_obj_t)(struct mem_t *mem, /* memory space to access */
+int is_write, /* access type */
+md_addr_t addr, /* address to access */
+char *p, /* input/output buffer */
+int nbytes); /* size of access */
 
 /* DLite memory access function, the debugger uses this function to display
-   the state of machine-specific state */
-typedef char *					/* error str, NULL if none */
-(*dlite_mstate_obj_t)(FILE *stream,		/* output stream */
-		      char *cmd,		/* optional command string */
-		      struct regs_t *regs,	/* registers to access */
-		      struct mem_t *mem);	/* memory space to access */
+ the state of machine-specific state */
+typedef char * /* error str, NULL if none */
+(*dlite_mstate_obj_t)(FILE *stream, /* output stream */
+char *cmd, /* optional command string */
+struct regs_t *regs, /* registers to access */
+struct mem_t *mem); /* memory space to access */
 
 /* initialize the DLite debugger */
 void
-dlite_init(dlite_reg_obj_t reg_obj,		/* register state object */
-	   dlite_mem_obj_t mem_obj,		/* memory state object */
-	   dlite_mstate_obj_t mstate_obj);	/* machine state object */
+dlite_init(dlite_reg_obj_t reg_obj, /* register state object */
+dlite_mem_obj_t mem_obj, /* memory state object */
+dlite_mstate_obj_t mstate_obj); /* machine state object */
 
 /*
  * default architected/machine state accessors
  */
 
 /* default architected memory state accessor */
-char *						/* err str, NULL for no err */
-dlite_mem_obj(struct mem_t *mem,		/* memory space to access */
-	      int is_write,			/* access type */
-	      md_addr_t addr,			/* address to access */
-	      char *p,				/* input, output */
-	      int nbytes);			/* size of access */
+char * /* err str, NULL for no err */
+dlite_mem_obj(struct mem_t *mem, /* memory space to access */
+int is_write, /* access type */
+md_addr_t addr, /* address to access */
+char *p, /* input, output */
+int nbytes); /* size of access */
 
 /* default architected machine-specific state accessor */
-char *						/* err str, NULL for no err */
-dlite_mstate_obj(FILE *stream,			/* output stream */
-		 char *cmd,			/* optional command string */
-		 struct regs_t *regs,		/* registers to access */
-		 struct mem_t *mem);		/* memory space to access */
+char * /* err str, NULL for no err */
+dlite_mstate_obj(FILE *stream, /* output stream */
+char *cmd, /* optional command string */
+struct regs_t *regs, /* registers to access */
+struct mem_t *mem); /* memory space to access */
 
 /* state access masks */
 #define ACCESS_READ	0x01			/* read access allowed */
@@ -184,12 +183,12 @@ extern int dlite_active /* = FALSE */;
 extern int dlite_check /* = FALSE */;
 
 /* internal break check interface */
-int						/* non-zero if brkpt hit */
-__check_break(md_addr_t next_PC,		/* address of next inst */
-	      int access,			/* mem access of last inst */
-	      md_addr_t addr,			/* mem addr of last inst */
-	      counter_t icount,			/* instruction count */
-	      counter_t cycle);			/* cycle count */
+int /* non-zero if brkpt hit */
+__check_break(md_addr_t next_PC, /* address of next inst */
+int access, /* mem access of last inst */
+md_addr_t addr, /* mem addr of last inst */
+counter_t icount, /* instruction count */
+counter_t cycle); /* cycle count */
 
 /* check for a break condition */
 #define dlite_check_break(NPC, ACCESS, ADDR, ICNT, CYCLE)		\
@@ -199,10 +198,10 @@ __check_break(md_addr_t next_PC,		/* address of next inst */
 
 /* DLite debugger main loop */
 void
-dlite_main(md_addr_t regs_PC,			/* addr of last inst to exec */
-	   md_addr_t next_PC,			/* addr of next inst to exec */
-	   counter_t cycle,			/* current processor cycle */
-	   struct regs_t *regs,			/* registers to access */
-	   struct mem_t *mem);			/* memory to access */
+dlite_main(md_addr_t regs_PC, /* addr of last inst to exec */
+md_addr_t next_PC, /* addr of next inst to exec */
+counter_t cycle, /* current processor cycle */
+struct regs_t *regs, /* registers to access */
+struct mem_t *mem); /* memory to access */
 
 #endif /* DLITE_H */

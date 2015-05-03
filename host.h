@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef HOST_H
 #define HOST_H
 
@@ -80,20 +79,20 @@
 #endif /* __GNUC__ */
 
 /* host-dependent canonical type definitions */
-typedef int bool_t;			/* generic boolean type */
-typedef unsigned char byte_t;		/* byte - 8 bits */
+typedef int bool_t; /* generic boolean type */
+typedef unsigned char byte_t; /* byte - 8 bits */
 typedef signed char sbyte_t;
-typedef unsigned short half_t;		/* half - 16 bits */
+typedef unsigned short half_t; /* half - 16 bits */
 typedef signed short shalf_t;
-typedef unsigned int word_t;		/* word - 32 bits */
+typedef unsigned int word_t; /* word - 32 bits */
 typedef signed int sword_t;
-typedef float sfloat_t;			/* single-precision float - 32 bits */
-typedef double dfloat_t;		/* double-precision float - 64 bits */
+typedef float sfloat_t; /* single-precision float - 32 bits */
+typedef double dfloat_t; /* double-precision float - 64 bits */
 
 /* qword defs, note: not all targets support qword types */
 #if defined(__GNUC__) || defined(__SUNPRO_C) || defined(__CC_C89) || defined(__CC_XLC)
 #define HOST_HAS_QWORD
-typedef unsigned long long qword_t;	/* qword - 64 bits */
+typedef unsigned long long qword_t; /* qword - 64 bits */
 typedef signed long long sqword_t;
 #ifdef ANSI_SYMCAT
 #define ULL(N)		N##ULL		/* qword_t constant */
@@ -104,7 +103,7 @@ typedef signed long long sqword_t;
 #endif
 #elif defined(__alpha)
 #define HOST_HAS_QWORD
-typedef unsigned long qword_t;		/* qword - 64 bits */
+typedef unsigned long qword_t; /* qword - 64 bits */
 typedef signed long sqword_t;
 #ifdef ANSI_SYMCAT
 #define ULL(N)		N##UL		/* qword_t constant */
@@ -115,7 +114,7 @@ typedef signed long sqword_t;
 #endif
 #elif defined(_MSC_VER)
 #define HOST_HAS_QWORD
-typedef unsigned __int64 qword_t;	/* qword - 64 bits */
+typedef unsigned __int64 qword_t; /* qword - 64 bits */
 typedef signed __int64 sqword_t;
 #define ULL(N)		((qword_t)(N))
 #define LL(N)		((sqword_t)(N))
@@ -126,7 +125,7 @@ typedef signed __int64 sqword_t;
 /* statistical counter types, use largest counter type available */
 #ifdef HOST_HAS_QWORD
 typedef sqword_t counter_t;
-typedef sqword_t tick_t;		/* NOTE: unsigned breaks caches */
+typedef sqword_t tick_t; /* NOTE: unsigned breaks caches */
 #else /* !HOST_HAS_QWORD */
 typedef dfloat_t counter_t;
 typedef dfloat_t tick_t;

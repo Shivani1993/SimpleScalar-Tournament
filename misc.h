@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef MISC_H
 #define MISC_H
 
@@ -95,7 +94,7 @@ extern int debugging;
 
 /* register a function to be called when an error is detected */
 void
-fatal_hook(void (*hook_fn)(FILE *stream));	/* fatal hook function */
+fatal_hook(void (*hook_fn)(FILE *stream)); /* fatal hook function */
 
 #ifdef __GNUC__
 /* declare a fatal run-time error, calls fatal hook function */
@@ -104,7 +103,7 @@ fatal_hook(void (*hook_fn)(FILE *stream));	/* fatal hook function */
 
 void
 _fatal(char *file, const char *func, int line, char *fmt, ...)
-__attribute__ ((noreturn));
+		__attribute__ ((noreturn));
 #else /* !__GNUC__ */
 void
 fatal(char *fmt, ...);
@@ -117,7 +116,7 @@ fatal(char *fmt, ...);
 
 void
 _panic(char *file, const char *func, int line, char *fmt, ...)
-__attribute__ ((noreturn));
+		__attribute__ ((noreturn));
 #else /* !__GNUC__ */
 void
 panic(char *fmt, ...);
@@ -177,27 +176,27 @@ static void debug(char *fmt, ...) {}
 
 /* seed the random number generator */
 void
-mysrand(unsigned int seed);	/* random number generator seed */
+mysrand(unsigned int seed); /* random number generator seed */
 
 /* get a random number */
-int myrand(void);		/* returns random number */
+int myrand(void); /* returns random number */
 
 /* copy a string to a new storage allocation (NOTE: many machines are missing
-   this trivial function, so I funcdup() it here...) */
-char *				/* duplicated string */
-mystrdup(char *s);		/* string to duplicate to heap storage */
+ this trivial function, so I funcdup() it here...) */
+char * /* duplicated string */
+mystrdup(char *s); /* string to duplicate to heap storage */
 
 /* find the last occurrence of a character in a string */
 char *
 mystrrchr(char *s, char c);
 
 /* case insensitive string compare (NOTE: many machines are missing this
-   trivial function, so I funcdup() it here...) */
-int				/* compare result, see strcmp() */
-mystricmp(char *s1, char *s2);	/* strings to compare, case insensitive */
+ trivial function, so I funcdup() it here...) */
+int /* compare result, see strcmp() */
+mystricmp(char *s1, char *s2); /* strings to compare, case insensitive */
 
 /* allocate some core, this memory has overhead no larger than a page
-   in size and it cannot be released. the storage is returned cleared */
+ in size and it cannot be released. the storage is returned cleared */
 void *getcore(int nbytes);
 
 /* return log of a number to the base 2 */
@@ -207,14 +206,14 @@ int log_base2(int n);
 char *elapsed_time(long sec);
 
 /* assume bit positions numbered 31 to 0 (31 high order bit), extract num bits
-   from word starting at position pos (with pos as the high order bit of those
-   to be extracted), result is right justified and zero filled to high order
-   bit, for example, extractl(word, 6, 3) w/ 8 bit word = 01101011 returns
-   00000110 */
+ from word starting at position pos (with pos as the high order bit of those
+ to be extracted), result is right justified and zero filled to high order
+ bit, for example, extractl(word, 6, 3) w/ 8 bit word = 01101011 returns
+ 00000110 */
 unsigned int
-extractl(int word,		/* the word from which to extract */
-         int pos,		/* bit positions 31 to 0 */
-         int num);		/* number of bits to extract */
+extractl(int word, /* the word from which to extract */
+int pos, /* bit positions 31 to 0 */
+int num); /* number of bits to extract */
 
 #if defined(sparc) && !defined(__svr4__)
 #define strtoul strtol
@@ -245,7 +244,7 @@ qword_t myatoq(char *nptr, char **endp, int base);
 #endif /* HOST_HAS_QWORD */
 
 /* same semantics as fopen() except that filenames ending with a ".gz" or ".Z"
-   will be automagically get compressed */
+ will be automagically get compressed */
 FILE *gzopen(char *fname, char *type);
 
 /* close compressed stream */

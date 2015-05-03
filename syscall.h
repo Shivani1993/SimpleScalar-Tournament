@@ -48,7 +48,6 @@
  * Copyright (C) 1994-2003 by Todd M. Austin, Ph.D. and SimpleScalar, LLC.
  */
 
-
 #ifndef SYSCALL_H
 #define SYSCALL_H
 
@@ -85,15 +84,14 @@
  *
  */
 
-
 /* syscall proxy handler, architect registers and memory are assumed to be
-   precise when this function is called, register and memory are updated with
-   the results of the sustem call */
+ precise when this function is called, register and memory are updated with
+ the results of the sustem call */
 void
-sys_syscall(struct regs_t *regs,	/* registers to access */
-	    mem_access_fn mem_fn,	/* generic memory accessor */
-	    struct mem_t *mem,		/* memory space to access */
-	    md_inst_t inst,		/* system call inst */
-	    int traceable);		/* traceable system call? */
+sys_syscall(struct regs_t *regs, /* registers to access */
+mem_access_fn mem_fn, /* generic memory accessor */
+struct mem_t *mem, /* memory space to access */
+md_inst_t inst, /* system call inst */
+int traceable); /* traceable system call? */
 
 #endif /* SYSCALL_H */
