@@ -371,6 +371,9 @@ struct stat_sdb_t *sdb) /* stats database */
 
 	/* get a name for this predictor */
 	switch (pred->class) {
+	case BPredTournament:
+		name = "bpred_tournament";
+		break;
 	case BPredComb:
 		name = "bpred_comb";
 		break;
@@ -402,6 +405,16 @@ struct stat_sdb_t *sdb) /* stats database */
 	sprintf(buf, "%s.dir_hits", name);
 	stat_reg_counter(sdb, buf, "total number of direction-predicted hits "
 			"(includes addr-hits)", &pred->dir_hits, 0, NULL);
+
+	if (pred->class == BPredTournament) {
+		sprintf(buf, "%s.used_2lev", name);
+		stat_reg_counter(sdb, buf, "total number of 2-level predictions used",
+				&pred->used_2lev, 0, NULL);
+		sprintf(buf, "%s.used_2lev2", name);
+		stat_reg_counter(sdb, buf, "total number of 2-level local predictions used",
+				&pred->used_2lev2, 0, NULL);
+	}
+
 	if (pred->class == BPredComb) {
 		sprintf(buf, "%s.used_bimod", name);
 		stat_reg_counter(sdb, buf, "total number of bimodal predictions used",
@@ -410,6 +423,7 @@ struct stat_sdb_t *sdb) /* stats database */
 		stat_reg_counter(sdb, buf, "total number of 2-level predictions used",
 				&pred->used_2lev, 0, NULL);
 	}
+
 	sprintf(buf, "%s.misses", name);
 	stat_reg_counter(sdb, buf, "total number of misses", &pred->misses, 0,
 			NULL);
@@ -477,6 +491,7 @@ void bpred_after_priming(struct bpred_t *bpred) {
 	bpred->used_ras = 0;
 	bpred->used_bimod = 0;
 	bpred->used_2lev = 0;
+	bpred->used_2lev2 = 0;
 	bpred->jr_hits = 0;
 	bpred->jr_seen = 0;
 	bpred->misses = 0;
