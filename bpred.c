@@ -586,8 +586,21 @@ int *stack_recover_idx) /* Non-speculative top-of-stack;
 			dir_update_ptr->dir.twolev2 = (*local >= 2);
 
 			// need meta?
-			dir_update_ptr->pdir1 = global;
-			dir_update_ptr->pdir2 = local;
+
+			if (*global >= 2) {
+				global_predictor_hit(dir_update_ptr->tournament_hit_flag);
+			}
+
+			if (*local >= 2) {
+				local_predictor_hit(dir_update_ptr->tournament_hit_flag);
+			}
+
+			if (*global >= 2) {
+				dir_update_ptr->pdir1 = global;
+				dir_update_ptr->pdir2 = local;
+			} else if (*local >= 2) {
+				dir_update_ptr->pdir1 = local;
+			}
 		}
 		break;
 
