@@ -1,4 +1,4 @@
-OVERVIEW:
+##OVERVIEW:
 
 This README file is for the SimpleScalar simulator release 3.0.  This release
 is available from:
@@ -8,7 +8,7 @@ is available from:
 in the file simplesim-3v0d.tar.gz.
 
 
-TO INSTALL:
+##TO INSTALL:
 
 The following details how to build and install the SimpleScalar simulators:
 
@@ -53,7 +53,7 @@ The following details how to build and install the SimpleScalar simulators:
 	perl executable on the first line of each script.
 
 
-BUILDING BINARIES FOR SIMPLESCALAR
+##BUILDING BINARIES FOR SIMPLESCALAR
 
 SimpleScalar/PISA binaries must be built using the SimpleScalar GNU tool
 chain (e.g., GCC, GAS, GLD), available from:
@@ -72,7 +72,7 @@ a "dnet_conn not found" error when linking Alpha OSF binaries, add
 "-ldnet_stub" to your link line.
 
 
-IS SIMPLESCALAR FREE?
+##IS SIMPLESCALAR FREE?
 
 No, but academic users (e.g., users at education institutions, U.S.
 government research labs, and non-profit research institutes) may use
@@ -87,7 +87,7 @@ commercial use license from SimpleScalar LLC.  Contact SimpleScalar
 LLC at info@simplescalar.com for commercial licensing details.
 
 
-PUBLISHING PAPERS WITH SIMPLESCALAR
+##PUBLISHING PAPERS WITH SIMPLESCALAR
 
 When publishing a paper with SimpleScalar results, please refer to the
 specific target you use as "SimpleScalar/PISA" or "SimpleScalar/Alpha".
@@ -106,7 +106,7 @@ is not appropriate for all computer architecture research, and it's
 certainly not any substitute for good science.
 
 
-USING SIMPLESCALAR FOR INSTRUCTION
+##USING SIMPLESCALAR FOR INSTRUCTION
 
 Many instructors have found the SimpleScalar tools useful in their
 courses.  To make this process as painless as possible, we've made
@@ -117,7 +117,7 @@ that the instructor can use to introduce students to the Simplescalar
 tool set.  The instructions kit is available from http://www.simplescalar.com.
 
 
-FOR MORE INFORMATION:
+##FOR MORE INFORMATION:
 
 For general documentation on the tool set, see the hacker's guide in the
 file "hack_guide.{pfd,ps,ppt}".  Frequently asked questions are answered
