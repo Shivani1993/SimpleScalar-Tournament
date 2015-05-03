@@ -153,6 +153,12 @@ void sim_reg_options(struct opt_odb_t *odb) {
 			/* default */twolev_config,
 			/* print */TRUE, /* format */NULL, /* !accrue */FALSE);
 
+	opt_reg_int_list(odb, "-bpred:tournament", "tournament predictor config "
+			"(<l1size> <l2size> <hist_size> <xor>)", tournament_config, tournament_nelt,
+			&tournament_nelt,
+			/* default */tournament_config,
+			/* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
 	opt_reg_int_list(odb, "-bpred:comb",
 			"combining predictor config (<meta_table_size>)", comb_config,
 			comb_nelt, &comb_nelt,
@@ -211,6 +217,24 @@ void sim_check_options(struct opt_odb_t *odb, int argc, char **argv) {
 		/* meta table size */0,
 		/* history reg size */twolev_config[2],
 		/* history xor address */twolev_config[3],
+		/* btb sets */btb_config[0],
+		/* btb assoc */btb_config[1],
+		/* ret-addr stack size */ras_size);
+	} else if (!mystricmp(pred_type, "tournament")) {
+		/* tournament adaptive predictor, bpred_create() checks args */
+		if (tournament_nelt!= 4)
+			fatal(
+					"bad tournament pred config (<l1size> <l2size> <hist_size> <xor>)");
+		if (btb_nelt != 2)
+			fatal("bad btb config (<num_sets> <associativity>)");
+
+		pred = bpred_create(BPredTournament,
+		/* bimod table size */0,
+		/* 2lev l1 size */tournament_config[0],
+		/* 2lev l2 size */tournament_config[1],
+		/* meta table size */0,
+		/* history reg size */tournament_config[2],
+		/* history xor address */tournament_config[3],
 		/* btb sets */btb_config[0],
 		/* btb assoc */btb_config[1],
 		/* ret-addr stack size */ras_size);
