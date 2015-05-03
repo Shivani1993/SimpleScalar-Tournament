@@ -97,6 +97,11 @@
 *
 */
 
+#define is_global_predictor_hit(flag)	((flag & (1 << 1)) != 0)
+#define is_local_predictor_hit(flag)	((flag & (1 << 0)) != 0)
+#define global_predictor_hit(flag)		(flag |= (1 << 1))
+#define local_predictor_hit(flag)		(flag |= (1 << 0))
+
 /* branch predictor types */
 enum bpred_class {
 	BPredComb,                    /* combined predictor (McFarling) */
@@ -176,11 +181,13 @@ struct bpred_t {
 	counter_t ras_hits;		/* num correct return-address predictions */
 };
 
+
 /* branch predictor update information */
 struct bpred_update_t {
 	char *pdir1;		/* direction-1 predictor counter */
 	char *pdir2;		/* direction-2 predictor counter */
 	char *pmeta;		/* meta predictor counter */
+	int tournament_hit_flag;
 	struct {		/* predicted directions */
 		unsigned int ras    : 1;	/* RAS used */
 		unsigned int bimod  : 1;    /* bimodal predictor */

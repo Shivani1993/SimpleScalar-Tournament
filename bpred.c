@@ -810,14 +810,23 @@ struct bpred_update_t *dir_update_ptr)/* pred state pointer */
 	{
 		pred->used_ras++;
 		if (correct)
-		pred->ras_hits++;
+			pred->ras_hits++;
 	}
 	else if ((MD_OP_FLAGS(op) & (F_CTRL|F_COND)) == (F_CTRL|F_COND))
 	{
 		if (dir_update_ptr->dir.meta)
-		pred->used_2lev++;
+			pred->used_2lev++;
 		else
-		pred->used_bimod++;
+			pred->used_bimod++;
+
+		if (pred->class == BPredTournament) {
+			if (is_global_predictor_hit(dir_update_ptr->tournament_hit_flag)) {
+				pred->used_2lev++;
+			}
+			if (is_local_predictor_hit(dir_update_ptr->tournament_hit_flag)) {
+				pred->used_2lev2++;
+			}
+		}
 	}
 
 	/* keep stats about JR's; also, but don't change any bpred state for JR's
