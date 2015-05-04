@@ -865,13 +865,15 @@ void bpred_update(struct bpred_t *pred, /* branch predictor instance */
 
 		int l1index2, shift_reg2;
 
-		/* also update appropriate L1 local history register */
-		l1index2 = (baddr >> MD_BR_SHIFT)
-				& (pred->dirpred.twolev2->config.two.l1size - 1);
-		shift_reg2 = (pred->dirpred.twolev2->config.two.shiftregs[l1index2] << 1)
-				| (!!taken);
-		pred->dirpred.twolev2->config.two.shiftregs[l1index2] = shift_reg2
-				& ((1 << pred->dirpred.twolev2->config.two.shift_width) - 1);
+		if (pred->class == BPredTournament) {
+			/* also update appropriate L1 local history register */
+			l1index2 = (baddr >> MD_BR_SHIFT)
+					& (pred->dirpred.twolev2->config.two.l1size - 1);
+			shift_reg2 = (pred->dirpred.twolev2->config.two.shiftregs[l1index2] << 1)
+					| (!!taken);
+			pred->dirpred.twolev2->config.two.shiftregs[l1index2] = shift_reg2
+					& ((1 << pred->dirpred.twolev2->config.two.shift_width) - 1);
+		}
 	}
 
 	/* find BTB entry if it's a taken branch (don't allocate for non-taken) */
