@@ -606,10 +606,10 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 
 			// need meta?
 
-			if (*global >= 2) {
+			if (*global >= 1) {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
-			} else if (*local >= 2) {
+			} else if (*local >= 1) {
 				dir_update_ptr->pdir1 = local;
 				dir_update_ptr->pdir2 = global;
 			} else {
