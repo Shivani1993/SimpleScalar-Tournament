@@ -593,6 +593,7 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 	dir_update_ptr->pdir1 = NULL;
 	dir_update_ptr->pdir2 = NULL;
 	dir_update_ptr->pmeta = NULL;
+	dir_update_ptr->selector = NULL;
 	/* Except for jumps, get a pointer to direction-prediction bits */
 	switch (pred->class) {
 	case BPredTournament:
@@ -617,11 +618,15 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
 			}*/
+
 			if ((*local == 3 && *global >= 1) || (*local == 0 && *global <= 2)) {
 				// strong taken/not taken
 				dir_update_ptr->pdir1 = local;
 				dir_update_ptr->pdir2 = global;
 			} else  {
+				// only use selector when conflicts between global and local
+				dir_update_ptr->selector = selector;
+			
 				if (*selector <= 1) {
 					dir_update_ptr->pdir1 = global;
 					dir_update_ptr->pdir2 = local;
@@ -990,16 +995,18 @@ void bpred_update(struct bpred_t *pred, /* branch predictor instance */
 
 	if (pred->class == BPredTournament) {
 		// update selector predictor
-		if (dir_update_ptr->dir.twolev != dir_update_ptr->dir.twolev2) {
-			/* only update meta predictor if global predictor different with local */
-			if (dir_update_ptr->dir.twolev == (unsigned int) taken) {
-				// global is correct
-				if (*dir_update_ptr->selector < 3)
-					++*dir_update_ptr->selector;
-			} else {
-				// local is right
-				if (*dir_update_ptr->selector > 0)
-					--*dir_update_ptr->selector;
+		if (dir_update_ptr->selector) {
+			if (dir_update_ptr->dir.twolev != dir_update_ptr->dir.twolev2) {
+				/* only update meta predictor if global predictor different with local */
+				if (dir_update_ptr->dir.twolev == (unsigned int) taken) {
+					// global is correct
+					if (*dir_update_ptr->selector < 3)
+						++*dir_update_ptr->selector;
+				} else {
+					// local is right
+					if (*dir_update_ptr->selector > 0)
+						--*dir_update_ptr->selector;
+				}
 			}
 		}
 	}
