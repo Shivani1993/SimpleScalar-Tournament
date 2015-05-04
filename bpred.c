@@ -90,7 +90,7 @@ unsigned int retstack_size) /* num entries in ret-addr stack */
 		pred->dirpred.twolev2 = bpred_dir_create(BPred2Level, l1size, l2size,
 				shift_width, xor);
 		// meta predictor
-		pred->dirpred.meta = bpred_dir_create(BPred2bit, meta_size, 0, 0, 0);
+		//pred->dirpred.meta = bpred_dir_create(BPred2bit, meta_size, 0, 0, 0);
 		break;
 
 	case BPredComb:

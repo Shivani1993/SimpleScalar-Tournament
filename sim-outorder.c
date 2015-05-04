@@ -120,12 +120,6 @@ static int twolev_nelt = 4;
 static int twolev_config[4] = { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */
 		FALSE };
 
-/* tournament predictor config (<l1size> <l2size> <hist_size> <xor>) */
-static int tournament_nelt = 4;
-static int tournament_config[4] = { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */
-		FALSE };
-
-
 /* combining predictor config (<meta_table_size> */
 static int comb_nelt = 1;
 static int comb_config[1] = { /* meta_table_size */1024 };
