@@ -90,6 +90,11 @@ static int twolev_nelt = 4;
 static int twolev_config[4] = { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */
 		FALSE };
 
+/* tournament predictor config (<l1size> <l2size> <hist_size> <xor>) */
+static int tournament_nelt = 4;
+static int tournament_config[4] = { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */
+		FALSE };
+
 /* combining predictor config (<meta_table_size> */
 static int comb_nelt = 1;
 static int comb_config[1] = { /* meta_table_size */1024 };
@@ -223,8 +228,7 @@ void sim_check_options(struct opt_odb_t *odb, int argc, char **argv) {
 	} else if (!mystricmp(pred_type, "tournament")) {
 		/* tournament adaptive predictor, bpred_create() checks args */
 		if (tournament_nelt!= 4)
-			fatal(
-					"bad tournament pred config (<l1size> <l2size> <hist_size> <xor>)");
+			fatal("bad tournament pred config (<l1size> <l2size> <hist_size> <xor>)");
 		if (btb_nelt != 2)
 			fatal("bad btb config (<num_sets> <associativity>)");
 
@@ -241,8 +245,7 @@ void sim_check_options(struct opt_odb_t *odb, int argc, char **argv) {
 	} else if (!mystricmp(pred_type, "comb")) {
 		/* combining predictor, bpred_create() checks args */
 		if (twolev_nelt != 4)
-			fatal(
-					"bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
+			fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
 		if (bimod_nelt != 1)
 			fatal("bad bimod predictor config (<table_size>)");
 		if (comb_nelt != 1)

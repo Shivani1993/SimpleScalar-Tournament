@@ -565,14 +565,14 @@ md_addr_t baddr) /* branch address */
  (used for recovering ret-addr stack after mis-predict).  */
 md_addr_t /* predicted branch target addr */
 bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
-md_addr_t baddr, /* branch address */
-md_addr_t btarget, /* branch target if taken */
-enum md_opcode op, /* opcode of instruction */
-int is_call, /* non-zero if inst is fn call */
-int is_return, /* non-zero if inst is fn return */
-struct bpred_update_t *dir_update_ptr, /* pred state pointer */
-int *stack_recover_idx) /* Non-speculative top-of-stack;
- * used on mispredict recovery */
+	md_addr_t baddr, /* branch address */
+	md_addr_t btarget, /* branch target if taken */
+	enum md_opcode op, /* opcode of instruction */
+	int is_call, /* non-zero if inst is fn call */
+	int is_return, /* non-zero if inst is fn return */
+	struct bpred_update_t *dir_update_ptr, /* pred state pointer */
+	int *stack_recover_idx) /* Non-speculative top-of-stack;
+ 	/* used on mispredict recovery */
 {
 	struct bpred_btb_ent_t *pbtb = NULL;
 	int index, i;
