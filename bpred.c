@@ -600,7 +600,7 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 			char *global, *local, *meta;
 			global = bpred_dir_lookup(pred->dirpred.twolev, baddr);
 			local = bpred_dir_lookup(pred->dirpred.twolev2, baddr);
-			meta = bpred_dir_lookup(pred->dirpred.meta, baddr);
+			//meta = bpred_dir_lookup(pred->dirpred.meta, baddr);
 			dir_update_ptr->dir.twolev = (*global >= 2);
 			dir_update_ptr->dir.twolev2 = (*local >= 2);
 
