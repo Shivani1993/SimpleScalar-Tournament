@@ -124,6 +124,7 @@ unsigned int retstack_size) /* num entries in ret-addr stack */
 
 	/* allocate ret-addr stack */
 	switch (class) {
+	case BPredTournament:
 	case BPredComb:
 	case BPred2Level:
 	case BPred2bit: {
