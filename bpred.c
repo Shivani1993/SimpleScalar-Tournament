@@ -597,18 +597,16 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 	switch (pred->class) {
 	case BPredTournament:
 		if ((MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND)) {
-			char *global, *local, *meta;
+			char *global, *local;
 			global = bpred_dir_lookup(pred->dirpred.twolev, baddr);
 			local = bpred_dir_lookup(pred->dirpred.twolev2, baddr);
 			//meta = bpred_dir_lookup(pred->dirpred.meta, baddr);
 			dir_update_ptr->dir.twolev = (*global >= 2);
 			dir_update_ptr->dir.twolev2 = (*local >= 2);
 
-			dir_update_ptr->pdir1 = local;
-
 			// need meta?
 
-			/*if (*global >= 2) {
+			if (*global >= 2) {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
 			} else if (*local >= 2) {
@@ -617,7 +615,7 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 			} else {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
-			}*/
+			}
 		}
 		break;
 
