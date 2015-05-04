@@ -591,6 +591,7 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 	dir_update_ptr->pdir1 = NULL;
 	dir_update_ptr->pdir2 = NULL;
 	dir_update_ptr->pmeta = NULL;
+	dir_update_ptr->tournament_hit_flag = 0;
 	/* Except for jumps, get a pointer to direction-prediction bits */
 	switch (pred->class) {
 	case BPredTournament:
@@ -616,6 +617,9 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 				dir_update_ptr->pdir2 = local;
 			} else if (*local >= 2) {
 				dir_update_ptr->pdir1 = local;
+			} else {
+				dir_update_ptr->pdir1 = global;
+				dir_update_ptr->pdir2 = local;
 			}
 		}
 		break;
