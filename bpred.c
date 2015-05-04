@@ -624,9 +624,6 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 				dir_update_ptr->pdir1 = local;
 				dir_update_ptr->pdir2 = global;
 			} else  {
-				// only use selector when conflicts between global and local
-				dir_update_ptr->selector = selector;
-			
 				if (*selector <= 1) {
 					dir_update_ptr->pdir1 = global;
 					dir_update_ptr->pdir2 = local;
@@ -634,6 +631,11 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 					dir_update_ptr->pdir1 = local;
 					dir_update_ptr->pdir2 = global;
 				}
+			}
+
+			if ((*local >= 2 && *global <= 1) || (*local <= 1 && *global >= 2)) {
+				// only use selector when conflicts between global and local
+				dir_update_ptr->selector = selector;
 			}
 		}
 		break;
