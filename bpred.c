@@ -89,6 +89,8 @@ unsigned int retstack_size) /* num entries in ret-addr stack */
 		// local predictor
 		pred->dirpred.twolev2 = bpred_dir_create(BPred2Level, l1size, l2size,
 				shift_width, xor);
+		// meta predictor
+		pred->dirpred.meta = bpred_dir_create(BPred2bit, meta_size, 0, 0, 0);
 		break;
 
 	case BPredComb:
@@ -596,31 +598,27 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 	switch (pred->class) {
 	case BPredTournament:
 		if ((MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND)) {
-			char *global, *local;
+			char *global, *local, *meta;
 			global = bpred_dir_lookup(pred->dirpred.twolev, baddr);
 			local = bpred_dir_lookup(pred->dirpred.twolev2, baddr);
+			meta = bpred_dir_lookup(pred->dirpred.meta, baddr);
 			dir_update_ptr->dir.twolev = (*global >= 2);
 			dir_update_ptr->dir.twolev2 = (*local >= 2);
 
+			dir_update_ptr->pdir1 = local;
+
 			// need meta?
 
-			if (*global >= 2) {
-				global_predictor_hit(dir_update_ptr->tournament_hit_flag);
-			}
-
-			if (*local >= 2) {
-				local_predictor_hit(dir_update_ptr->tournament_hit_flag);
-			}
-
-			if (*global >= 2) {
+			/*if (*global >= 2) {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
 			} else if (*local >= 2) {
 				dir_update_ptr->pdir1 = local;
+				dir_update_ptr->pdir2 = global;
 			} else {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
-			}
+			}*/
 		}
 		break;
 
@@ -802,10 +800,10 @@ void bpred_update(struct bpred_t *pred, /* branch predictor instance */
 			pred->used_bimod++;
 
 		if (pred->class == BPredTournament) {
-			if (is_global_predictor_hit(dir_update_ptr->tournament_hit_flag)) {
+			if (dir_update_ptr->dir.twolev) {
 				pred->used_2lev++;
 			}
-			if (is_local_predictor_hit(dir_update_ptr->tournament_hit_flag)) {
+			if (dir_update_ptr->dir.twolev2) {
 				pred->used_2lev2++;
 			}
 		}
