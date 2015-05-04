@@ -145,7 +145,8 @@ struct bpred_t {
 		struct bpred_dir_t *bimod; /* first direction predictor */
 		struct bpred_dir_t *twolev; /* second direction predictor */
 		struct bpred_dir_t *meta; /* meta predictor */
-		struct bpred_dir_t *twolev2;
+		struct bpred_dir_t *twolev2; /*local predictor*/
+		struct bpred_dir_t *selector; /* global or local selection history */
 	} dirpred;
 
 	struct {

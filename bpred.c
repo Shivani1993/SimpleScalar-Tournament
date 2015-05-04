@@ -89,8 +89,8 @@ unsigned int retstack_size) /* num entries in ret-addr stack */
 		// local predictor
 		pred->dirpred.twolev2 = bpred_dir_create(BPred2Level, l1size, l2size,
 				shift_width, xor);
-		// meta predictor
-		//pred->dirpred.meta = bpred_dir_create(BPred2bit, meta_size, 0, 0, 0);
+		// selector predictor
+		pred->dirpred.selector = bpred_dir_create(BPred2bit, 1024, 0, 0, 0);
 		break;
 
 	case BPredComb:
@@ -597,24 +597,38 @@ bpred_lookup(struct bpred_t *pred, /* branch predictor instance */
 	switch (pred->class) {
 	case BPredTournament:
 		if ((MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND)) {
-			char *global, *local;
+			char *global, *local, *selector;
 			global = bpred_dir_lookup(pred->dirpred.twolev, baddr);
 			local = bpred_dir_lookup(pred->dirpred.twolev2, baddr);
+			selector = bpred_dir_lookup(pred->dirpred.selector, baddr);
 			//meta = bpred_dir_lookup(pred->dirpred.meta, baddr);
 			dir_update_ptr->dir.twolev = (*global >= 2);
 			dir_update_ptr->dir.twolev2 = (*local >= 2);
 
 			// need meta?
 
-			if (*global >= 1) {
+			/*if (*global >= 2) {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
-			} else if (*local >= 1) {
+			} else if (*local >= 2) {
 				dir_update_ptr->pdir1 = local;
 				dir_update_ptr->pdir2 = global;
 			} else {
 				dir_update_ptr->pdir1 = global;
 				dir_update_ptr->pdir2 = local;
+			}*/
+			if ((*local == 3 && *global >= 1) || (*local == 0 && *global <= 2)) {
+				// strong taken/not taken
+				dir_update_ptr->pdir1 = local;
+				dir_update_ptr->pdir2 = global;
+			} else  {
+				if (*selector <= 1) {
+					dir_update_ptr->pdir1 = global;
+					dir_update_ptr->pdir2 = local;
+				} else {
+					dir_update_ptr->pdir1 = local;
+					dir_update_ptr->pdir2 = global;
+				}
 			}
 		}
 		break;
@@ -970,6 +984,22 @@ void bpred_update(struct bpred_t *pred, /* branch predictor instance */
 				/* bimodal predictor was correct */
 				if (*dir_update_ptr->pmeta > 0)
 					--*dir_update_ptr->pmeta;
+			}
+		}
+	}
+
+	if (pred->class == BPredTournament) {
+		// update selector predictor
+		if (dir_update_ptr->dir.twolev != dir_update_ptr->dir.twolev2) {
+			/* only update meta predictor if global predictor different with local */
+			if (dir_update_ptr->dir.twolev == (unsigned int) taken) {
+				// global is correct
+				if (*dir_update_ptr->selector < 3)
+					++*dir_update_ptr->selector;
+			} else {
+				// local is right
+				if (*dir_update_ptr->selector > 0)
+					--*dir_update_ptr->selector;
 			}
 		}
 	}
